@@ -24,12 +24,12 @@
    3. form-data: csv file
 
 2.  API for find policy info with the help of the username
-   1. URL http://your-domain:5000/api/policy-details/John Doe
-   2. Method : GET
+    1. URL http://your-domain:5000/api/policy-details/John Doe
+    2. Method : GET
 
 3. API for provide aggregated policy by each user.
-  1. URL http://your-domain:5000/api/aggregated_policy
-  2. Method : GET
+   1. URL http://your-domain:5000/api/aggregated_policy
+   2. Method : GET
 
 4. API for post-service that takes the message, day, and time
    1. URL http://your-domain:5000/api/message
