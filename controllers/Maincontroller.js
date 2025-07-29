@@ -6,6 +6,7 @@ const User = require("../models/User");
 const Policy = require("../models/Policy");
 const upload = multer({ dest: 'uploads/' });
 
+
 /************************** Upload file and delegate processing to worker thread ********/
 exports.uploadFile = [upload.single('file'), async (req, res) => {
     try {
@@ -49,7 +50,7 @@ exports.findPolicyByUsername = [async(req,res)=>{
 
         return res.status(200).json({data:policy_details});
     } catch (error) {
-        return res.status(500).json({error:err.message});
+        return res.status(500).json({error:error.message});
     }
 }]
 
@@ -85,6 +86,8 @@ exports.aggregatedPolicyByuser = [async(req,res)=>{
 
         return res.status(200).json({data:result});
     } catch (error) {
-        return res.status(500).json({error:err.message});
+        return res.status(500).json({error:error.message});
     }
 }]
+
+/************************** Track real-time CPU utilization of the node server and on 70% usage restart the server */
