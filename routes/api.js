@@ -10,5 +10,11 @@ router.get('/policy-details/:username',maincontroller.findPolicyByUsername);
 
 /*********************** API for provide aggregated policy by each user. */
 router.get('/aggregated_policy',maincontroller.aggregatedPolicyByuser);
+
+/***************** API for post-service that takes the message, day, and time */
+router.post('/message',maincontroller.postMessage);
+
 module.exports = router
+
+
 

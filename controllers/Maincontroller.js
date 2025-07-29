@@ -4,6 +4,7 @@ const fs = require('fs');
 const { Worker } = require("worker_threads");
 const User = require("../models/User");
 const Policy = require("../models/Policy");
+const Message = require("../models/Message");
 const upload = multer({ dest: 'uploads/' });
 
 
@@ -36,58 +37,80 @@ exports.uploadFile = [upload.single('file'), async (req, res) => {
 
 
 /************************** find policy info with the help of the username. */
-exports.findPolicyByUsername = [async(req,res)=>{
+exports.findPolicyByUsername = [async (req, res) => {
     try {
-        const user = await User.findOne({firstName:req.params.username});
-        if(!user){
-            return res.status(404).json({message:'User not found !!'});
+        const user = await User.findOne({ firstName: req.params.username });
+        if (!user) {
+            return res.status(404).json({ message: 'User not found !!' });
         }
 
-        const policy_details = await Policy.find({userId:user._id});
-        if(policy_details.length == 0){
-            return res.status(404).json({message:'Policy details not found !!'});
+        const policy_details = await Policy.find({ userId: user._id });
+        if (policy_details.length == 0) {
+            return res.status(404).json({ message: 'Policy details not found !!' });
         }
 
-        return res.status(200).json({data:policy_details});
+        return res.status(200).json({ data: policy_details });
     } catch (error) {
-        return res.status(500).json({error:error.message});
+        return res.status(500).json({ error: error.message });
     }
 }]
 
 /****************************** provide aggregated policy by each user. */
-exports.aggregatedPolicyByuser = [async(req,res)=>{
+exports.aggregatedPolicyByuser = [async (req, res) => {
     try {
         const result = await Policy.aggregate([
             {
-                $group:{
-                    _id:"$userId",
-                    totalPolicies:{$sum:1}
+                $group: {
+                    _id: "$userId",
+                    totalPolicies: { $sum: 1 }
                 }
             },
             {
-                $lookup:{
-                    from:"users",
-                    localField:"_id",
-                    foreignField:"_id",
-                    as:"user"
+                $lookup: {
+                    from: "users",
+                    localField: "_id",
+                    foreignField: "_id",
+                    as: "user"
                 }
             },
             {
                 $unwind: "$user"
             },
             {
-                $project:{
-                    _id:0,
-                    username:"$user.firstName",
+                $project: {
+                    _id: 0,
+                    username: "$user.firstName",
                     totalPolicies: 1
                 }
             }
         ]);
 
-        return res.status(200).json({data:result});
+        return res.status(200).json({ data: result });
     } catch (error) {
-        return res.status(500).json({error:error.message});
+        return res.status(500).json({ error: error.message });
     }
 }]
 
-/************************** Track real-time CPU utilization of the node server and on 70% usage restart the server */
+/************************** Post message */
+exports.postMessage = [async (req, res) => {
+    try {
+        const { message, day, time } = await req.body;
+
+        let scheduledDate = new Date(`${day}T${time}:00`);
+
+        const formatted = scheduledDate.toLocaleString('en-IN', {
+            timeZone: 'Asia/Kolkata',
+            hour12: true
+        });
+       
+
+        const msg = await Message.create({
+            message, scheduledAt: formatted
+        })
+
+        return res.status(200).json({ data: msg });
+
+    } catch (error) {
+        return res.status(500).json({ error: error.message });
+    }
+}]
