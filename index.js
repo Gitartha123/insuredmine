@@ -21,7 +21,7 @@ setInterval(() => {
     if (cpuUsage() > 4) {
         console.log("High CPU usage. Restarting server !!");
 
-        // Run the batch file to restart
+
         exec('start.bat', (err, stdout, stderr) => {
             if (err) {
                 console.error(`Restart failed: ${err}`);
@@ -30,7 +30,7 @@ setInterval(() => {
             console.log(stdout);
         });
 
-        // Exit current process
+
         process.exit(0);
     }
 }, 5000)
