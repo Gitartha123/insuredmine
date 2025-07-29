@@ -18,7 +18,7 @@ connectToMongo();
 
 /**** check cpu utilize pecentage in every 5 seconds */
 setInterval(() => {
-    if (cpuUsage() > 4) {
+    if (cpuUsage() > 70) {
         console.log("High CPU usage. Restarting server !!");
 
 
